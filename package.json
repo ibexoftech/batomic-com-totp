@@ -1,0 +1,32 @@
+{
+  "name": "batomic-com-totp",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --experimental-https",
+    "build": "next build",
+    "start": "tsx --env-file=.env.local scripts/server.ts",
+    "seed": "tsx --env-file=.env.local scripts/seed.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "better-sqlite3-multiple-ciphers": "^11.9.1",
+    "html5-qrcode": "^2.3.8",
+    "next": "^15.3.3",
+    "otpauth": "^9.4.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.4",
+    "@types/react-dom": "^19.1.5",
+    "eslint": "^9.27.0",
+    "eslint-config-next": "^15.3.3",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.4"
+  }
+}
