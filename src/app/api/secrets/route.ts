@@ -14,7 +14,9 @@ export async function GET() {
 
   const db = getDb();
   const secrets = db.prepare(
-    'SELECT id, label, issuer, algorithm, digits, period, added_by, created_at FROM secrets ORDER BY created_at DESC'
+    `SELECT id, label, issuer, algorithm, digits, period, added_by, created_at,
+            firebase_enabled, firebase_url, firebase_api_key, firebase_token_target
+     FROM secrets ORDER BY created_at DESC`
   ).all();
 
   return NextResponse.json(secrets);

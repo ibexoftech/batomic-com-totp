@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { SESSION_COOKIE_NAME } from '@/lib/constants';
 import { verifySessionToken } from '@/lib/session';
 import { generateAllCodes } from '@/lib/totp';
+import { startFirebasePusher } from '@/lib/firebase-pusher';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +16,8 @@ export async function GET(request: NextRequest) {
   if (!session) {
     return new Response('Unauthorized', { status: 401 });
   }
+
+  startFirebasePusher();
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream({

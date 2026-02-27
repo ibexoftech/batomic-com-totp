@@ -70,6 +70,16 @@ function runMigrations(db: Database.Database): void {
       PRAGMA user_version = 1;
     `);
   }
+
+  if (version < 2) {
+    db.exec(`
+      ALTER TABLE secrets ADD COLUMN firebase_enabled INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE secrets ADD COLUMN firebase_url TEXT NOT NULL DEFAULT '';
+      ALTER TABLE secrets ADD COLUMN firebase_api_key TEXT NOT NULL DEFAULT '';
+      ALTER TABLE secrets ADD COLUMN firebase_token_target TEXT NOT NULL DEFAULT '';
+      PRAGMA user_version = 2;
+    `);
+  }
 }
 
 export function closeDb(): void {

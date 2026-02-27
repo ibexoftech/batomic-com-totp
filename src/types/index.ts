@@ -18,6 +18,10 @@ export interface Secret {
   period: number;
   added_by: number;
   created_at: string;
+  firebase_enabled: number;
+  firebase_url: string;
+  firebase_api_key: string;
+  firebase_token_target: string;
 }
 
 export interface TotpCode {

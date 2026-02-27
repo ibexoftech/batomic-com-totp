@@ -96,6 +96,38 @@ describe('database', () => {
     expect(entry.ip_address).toBe('127.0.0.1');
   });
 
+  it('migrates from v1 to v2 adding firebase columns', () => {
+    db.pragma('user_version = 1');
+
+    // Run v2 migration
+    db.exec(`
+      ALTER TABLE secrets ADD COLUMN firebase_enabled INTEGER NOT NULL DEFAULT 0;
+      ALTER TABLE secrets ADD COLUMN firebase_url TEXT NOT NULL DEFAULT '';
+      ALTER TABLE secrets ADD COLUMN firebase_api_key TEXT NOT NULL DEFAULT '';
+      ALTER TABLE secrets ADD COLUMN firebase_token_target TEXT NOT NULL DEFAULT '';
+      PRAGMA user_version = 2;
+    `);
+
+    const version = db.pragma('user_version', { simple: true }) as number;
+    expect(version).toBe(2);
+
+    // Insert a secret and verify defaults
+    db.prepare('INSERT INTO users (username, password_hash) VALUES (?, ?)').run('test', 'hash');
+    const enc = Buffer.from([1, 2, 3, 4]);
+    const iv = Buffer.from([5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]);
+    const tag = Buffer.from([17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32]);
+
+    db.prepare(
+      'INSERT INTO secrets (label, encrypted_secret, iv, auth_tag, added_by) VALUES (?, ?, ?, ?, ?)'
+    ).run('test', enc, iv, tag, 1);
+
+    const row = db.prepare('SELECT firebase_enabled, firebase_url, firebase_api_key, firebase_token_target FROM secrets WHERE label = ?').get('test') as Record<string, unknown>;
+    expect(row.firebase_enabled).toBe(0);
+    expect(row.firebase_url).toBe('');
+    expect(row.firebase_api_key).toBe('');
+    expect(row.firebase_token_target).toBe('');
+  });
+
   it('is unreadable without encryption key', () => {
     db.close();
     const db2 = new Database(dbPath, { readonly: true });

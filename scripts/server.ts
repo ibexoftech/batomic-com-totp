@@ -2,6 +2,7 @@ import https from 'node:https';
 import fs from 'node:fs';
 import path from 'node:path';
 import next from 'next';
+import { startFirebasePusher } from '../src/lib/firebase-pusher';
 
 const dev = process.env.NODE_ENV !== 'production';
 const hostname = '0.0.0.0';
@@ -24,6 +25,8 @@ async function main() {
   const server = https.createServer(tlsOptions, (req, res) => {
     handle(req, res);
   });
+
+  startFirebasePusher();
 
   server.listen(port, hostname, () => {
     console.log(`> HTTPS server ready on https://${hostname}:${port}`);
